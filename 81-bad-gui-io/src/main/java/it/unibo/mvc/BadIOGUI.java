@@ -8,14 +8,10 @@ import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.util.List;
 import java.util.Random;
 
 /**
@@ -41,29 +37,30 @@ public class BadIOGUI {
     public BadIOGUI() {
         final JPanel canvas = new JPanel();
         canvas.setLayout(new BorderLayout());
+        final JPanel canvas_2 = new JPanel();
+        canvas_2.setLayout(new BoxLayout(canvas_2, BoxLayout.X_AXIS));
+        canvas.add(canvas_2, BorderLayout.CENTER);
+
         final JButton write = new JButton("Write on file");
-        canvas.add(write, BorderLayout.CENTER);
+        canvas_2.add(write, BorderLayout.CENTER);
         frame.setContentPane(canvas);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         /*
          * Handlers
          */
-        write.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                /*
-                 * This would be VERY BAD in a real application.
-                 * 
-                 * This makes the Event Dispatch Thread (EDT) work on an I/O
-                 * operation. I/O operations may take a long time, during which
-                 * your UI becomes completely unresponsive.
-                 */
-                try (PrintStream ps = new PrintStream(PATH, StandardCharsets.UTF_8)) {
-                    ps.print(randomGenerator.nextInt());
-                } catch (IOException e1) {
-                    JOptionPane.showMessageDialog(frame, e1, "Error", JOptionPane.ERROR_MESSAGE);
-                    e1.printStackTrace(); // NOPMD: allowed as this is just an exercise
-                }
+        write.addActionListener(e -> {
+            /*
+             * This would be VERY BAD in a real application.
+             * 
+             * This makes the Event Dispatch Thread (EDT) work on an I/O
+             * operation. I/O operations may take a long time, during which
+             * your UI becomes completely unresponsive.
+             */
+            try (PrintStream ps = new PrintStream(PATH, StandardCharsets.UTF_8)) {
+                ps.print(randomGenerator.nextInt());
+            } catch (IOException e1) {
+                JOptionPane.showMessageDialog(frame, e1, "Error", JOptionPane.ERROR_MESSAGE);
+                e1.printStackTrace(); // NOPMD: allowed as this is just an exercise
             }
         });
     }
