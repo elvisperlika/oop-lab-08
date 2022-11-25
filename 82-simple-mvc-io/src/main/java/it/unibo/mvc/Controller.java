@@ -1,41 +1,37 @@
 package it.unibo.mvc;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Application controller. Performs the I/O.
  */
 public class Controller {
 
-    public static final String SEP = File.separator;
-    public static final String DEFAULT_PATH = 
-		System.getProperty("Users") + SEP + "elvisperlika" + SEP + "Desktop" + SEP + "FileTest.txt";
+    private static final String HOME = System.getProperty("user.home");
+    private static final String DEFAULT_FILE = "Output.txt";
 
-    FileWriter currentFile;
-    public Controller() {
-        try {
-            this.currentFile = new FileWriter(DEFAULT_PATH);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    private File dest = new File(HOME + File.separator + DEFAULT_FILE);
+
+    final File getCurrentFile() {
+        return dest;
     }
 
-    final FileWriter getCurrentFile() {
-        return currentFile;
+    final File setCurrFile(final File file) {
+        return dest = file;
     }
     
     final String getPath() {
-        return DEFAULT_PATH;
+        return dest.getPath();
     }
 
-    final void writeOnFile(String inString) {
-        try {
-            currentFile.write(inString);
-        } catch (IOException e) {
-            e.printStackTrace();
+    final void writeOnFile(String inString) throws IOException {
+        try (PrintStream out = new PrintStream(dest, StandardCharsets.UTF_8)) {
+            out.println(inString);
         }
     }
-    
+
+
 }
